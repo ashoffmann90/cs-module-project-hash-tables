@@ -2,6 +2,7 @@ class HashTableEntry:
     """
     Linked List hash table key/value pair
     """
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
@@ -22,7 +23,9 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
-
+        self.capacity = capacity
+        self.size = 0
+        self.buckets = [None] * capacity
 
     def get_num_slots(self):
         """
@@ -35,16 +38,17 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        return self.capacity
 
     def get_load_factor(self):
         """
         Return the load factor for this hash table.
 
         Implement this.
+
+        *number of slots used / number of total slots
         """
         # Your code here
-
 
     def fnv1(self, key):
         """
@@ -52,9 +56,8 @@ class HashTable:
 
         Implement this, and/or DJB2.
         """
-
         # Your code here
-
+        pass
 
     def djb2(self, key):
         """
@@ -63,14 +66,17 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
-
+        hash = 5381
+        for c in key:
+            hash = (hash * 33) + ord(c)
+        return hash
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
+        # return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -82,7 +88,38 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        if self.buckets[index] is None:
+            self.buckets[index] = HashTableEntry(key, value)
+            self.size += 1
+        else:
+            item = self.buckets[index]
+            if item.key == key:
+                item.value = value
+            else:
+                while item.next != None and item.key != key:
+                    item = item.next
+                item.next = HashTableEntry(key, value)
+                self.size += 1
 
+        # # increment so that we know we added an element
+        # # find the index we're going to in array, by using hash function we created
+        # self.size += 1
+        # index = self.hash_index(key)
+        # # find the item at that index
+        # item = self.buckets[index]
+        # # if the bucket is empty, create a new node and add it to that bucket
+        # if item is None:
+        #     self.buckets = HashTableEntry(key, value)
+        #     return
+        # # if a collision occurs (there is an item already there), iterate to end and add key there
+        # # we have to keep track of the prev and current item
+        # prev = item
+        # while item is not None:
+        #     # moves to the next item
+        #     prev = item
+        #     item = item.next
+        # prev.next = HashTableEntry(key, value)
 
     def delete(self, key):
         """
@@ -93,7 +130,35 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        item = self.buckets[index]
+        if self.buckets[index].key == key:
+            self.buckets[index] = None
+            self.size -= 1
+        elif self.buckets[index].key != key and self.buckets[index].next != None:
+            prev = self.buckets[index]
+            current = self.buckets[index].next
+            while current.key != key and current.next != None:
+                prev, current = current, current.next
+            if current.key == key:
+                prev.next = current.next
+                self.size -= 1
+        if self.buckets[index] == None:
+            print('Key does not exist.')
 
+        # while item is not None and item.key != key:
+        #     prev = item
+        #     item = item.next
+        # if item is None:
+        #     return None
+        # else:
+        #     self.size -= 1
+        #     result = item.value
+        #     if prev is None:
+        #         item = None
+        #     else:
+        #         prev.next = prev.next.next
+        #     return result
 
     def get(self, key):
         """
@@ -104,7 +169,20 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        index = self.hash_index(key)
+        item = self.buckets[index]
+        if item == None:
+            return item
+        while item.key != key and item.next != None:
+            item = item.next
+        if item.key == key:
+            return item. value
+        # while item is not None and item.key != key:
+        #     item = item.next
+        # if item is None:
+        #     return None
+        # else:
+        #     return item.value
 
     def resize(self, new_capacity):
         """
@@ -114,7 +192,6 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
 
 
 if __name__ == "__main__":
