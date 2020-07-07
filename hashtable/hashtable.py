@@ -13,6 +13,11 @@ class HashTableEntry:
 MIN_CAPACITY = 8
 
 
+class LinkedList:
+    def __init__(self):
+        self.head = None
+
+
 class HashTable:
     """
     A hash table that with `capacity` buckets
@@ -25,7 +30,7 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.size = 0
-        self.buckets = [None] * capacity
+        self.buckets = [LinkedList()] * capacity
 
     def get_num_slots(self):
         """
@@ -38,7 +43,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-        return self.capacity
+        return len(self.buckets)
 
     def get_load_factor(self):
         """
@@ -49,6 +54,7 @@ class HashTable:
         *number of slots used / number of total slots
         """
         # Your code here
+        return self.size/len(self.buckets)
 
     def fnv1(self, key):
         """
@@ -87,21 +93,56 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
+        # find the index
         index = self.hash_index(key)
-        if self.buckets[index] is None:
-            self.buckets[index] = HashTableEntry(key, value)
+        # if there is nothing there
+        if self.buckets[index].head is None:
+            # put it here
+            self.buckets[index].head = HashTableEntry(key, value)
             self.size += 1
         else:
-            item = self.buckets[index]
-            if item.key == key:
-                item.value = value
-            else:
-                while item.next != None and item.key != key:
-                    item = item.next
-                item.next = HashTableEntry(key, value)
-                self.size += 1
+            # set your current position
+            cur = self.buckets[index].head
+            # while there is a next node
+            while cur.next:
+                # and if the current position is the same as the passed in key
+                if cur.key == key:
+                    cur.value = value
+                cur = cur.next
 
+            cur.next = HashTableEntry(key, value)
+            self.size += 1
+
+        # day one's homework
+        # # Your code here
+        # # find the key
+        # index = self.hash_index(key)
+        # # if there is nothing there
+        # if self.buckets[index] is None:
+        #     # create a new node
+        #     self.buckets[index] = HashTableEntry(key, value)
+        #     # increment to indicate we added a node
+        #     self.size += 1
+        # # otherwise
+        # else:
+        #     # set your position to the first item
+        #     item = self.buckets[index]
+        #     # if the key at that position is the same as the key passed in
+        #     if item.key == key:
+        #         # set the item's value to the value passed in
+        #         item.value = value
+        #     # otherwise
+        #     else:
+        #         # while the next item is not the last element AND the item is not the same as the passed in key
+        #         while item.next != None and item.key != key:
+        #             # move your position to the next item
+        #             item = item.next
+        #         # after you exit the loop, set the next item to the newly created node
+        #         item.next = HashTableEntry(key, value)
+        #         # and increment
+        #         self.size += 1
+
+        # code that didn't work?
         # # increment so that we know we added an element
         # # find the index we're going to in array, by using hash function we created
         # self.size += 1
@@ -130,21 +171,39 @@ class HashTable:
         Implement this.
         """
         # Your code here
+
         index = self.hash_index(key)
-        item = self.buckets[index]
-        if self.buckets[index].key == key:
-            self.buckets[index] = None
+        item = self.buckets[index].head
+
+        if item.key == key:
+            self.buckets[index].head = self.buckets[index].head.next
             self.size -= 1
-        elif self.buckets[index].key != key and self.buckets[index].next != None:
-            prev = self.buckets[index]
-            current = self.buckets[index].next
-            while current.key != key and current.next != None:
-                prev, current = current, current.next
-            if current.key == key:
-                prev.next = current.next
+            return
+
+        while item.next:
+            prev = item
+            item = item.next
+            if item.key == key:
+                prev.next = item.next
                 self.size -= 1
-        if self.buckets[index] == None:
-            print('Key does not exist.')
+                return None
+
+        # day one's code
+        # index = self.hash_index(key)
+        # item = self.buckets[index]
+        # if self.buckets[index].key == key:
+        #     self.buckets[index] = None
+        #     self.size -= 1
+        # elif self.buckets[index].key != key and self.buckets[index].next != None:
+        #     prev = self.buckets[index]
+        #     current = self.buckets[index].next
+        #     while current.key != key and current.next != None:
+        #         prev, current = current, current.next
+        #     if current.key == key:
+        #         prev.next = current.next
+        #         self.size -= 1
+        # if self.buckets[index] == None:
+        #     print('Key does not exist.')
 
         # while item is not None and item.key != key:
         #     prev = item
@@ -170,19 +229,21 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-        item = self.buckets[index]
+        item = self.buckets[index].head
         if item == None:
-            return item
-        while item.key != key and item.next != None:
-            item = item.next
+            return None
         if item.key == key:
             return item. value
-        # while item is not None and item.key != key:
+
+        while item.next:
+            item = item.next
+            if item.key == key:
+                return item.value
+        return None
+
+        # yesterday's, switch this while with the previous while
+        # while item.key != key and item.next != None:
         #     item = item.next
-        # if item is None:
-        #     return None
-        # else:
-        #     return item.value
 
     def resize(self, new_capacity):
         """
@@ -192,6 +253,23 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        self.capacity = new_capacity
+        new_list = [LinkedList()] * new_capacity
+
+        for i in self.buckets:
+            cur = i.head
+
+            while cur is not None:
+                index = self.hash_index(cur.key)
+
+                if new_list[index].head == None:
+                    new_list[index].head = HashTableEntry(cur.key, cur.value)
+                else:
+                    item = HashTableEntry(cur.key, cur.value)
+                    item.next = new_list[index].head
+                    new_list[index].head = item
+                cur = cur.next
+        self.buckets = new_list
 
 
 if __name__ == "__main__":
