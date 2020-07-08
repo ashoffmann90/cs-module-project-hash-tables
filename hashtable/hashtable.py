@@ -30,6 +30,7 @@ class HashTable:
         # Your code here
         self.capacity = capacity
         self.size = 0
+        # change to using a linked list by adding the linkedlist class, and initializing it to each slot in the array
         self.buckets = [LinkedList()] * capacity
 
     def get_num_slots(self):
