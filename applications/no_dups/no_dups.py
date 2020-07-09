@@ -1,6 +1,23 @@
 def no_dups(s):
     # Your code here
+    # .split(' ')
+    result = ''
+    words = {}
+    string = s.split()
+    for word in string:
+        if word not in words:
+            words[word] = None
+            result += word + ' '
+    # print('this is result', result)
+    return result.strip()
 
+# Input: a string of words separated by spaces. Only the letters `a`-`z`are utilized.
+
+# Output: the string in the same order, but with subsequent duplicate words removed.
+
+# There must be no extra spaces at the end of your returned string.
+
+# The solution must be `O(n)`.
 
 
 if __name__ == "__main__":
