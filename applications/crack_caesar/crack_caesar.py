@@ -4,23 +4,90 @@
 # Your code here
 
 
-with open('./applications/crack_caesar/ciphertext.txt') as f:
-    content = f.read()
-
-# print(content)
+# standup code
+cipher = open('./applications/crack_caesar/ciphertext.txt').read()
 
 
-def count_letters(s):
+def create_key(s):
     count = {}
-    for c in s:
-        if c in count:
-            count[c] += 1
-        else:
-            count[c] = 1
+    order = ['E', 'T', 'A', 'O', 'H', 'N', 'R', 'I', 'S', 'D', 'L', 'W',
+             'U', 'G', 'F', 'B', 'M', 'Y', 'C', 'P', 'K', 'V', 'Q', 'J', 'X', 'Z']
+    # ignore = ['"', ':', ';', ',', '.', '-', '+', '=', '/', "\\", '|', '[', ']', '{', '}','(',')','*','^','&',' ']
+    # for i in ignore:
+    # s=s.replace(i,'') #can use isalpha instead
+    # count the letters
+    for letter in s:
+        # can add this instead of the s.replace
+        if letter.isalpha():
+            if letter in count:
+                count[letter] += 1
+            else:
+                count[letter] = 1
+    count = {key: value for key, value in sorted(
+        count.items(), key=lambda item: item[1], reverse=True)}
+    # print(count)
+    for index, key in enumerate(count):
+        if index >= len(order):
+            continue
+        count[key] = order[index]
     return count
 
 
-print(count_letters(content))
+def decode(s, key):
+    r = ""
+    for c in s:
+        if c not in key:
+            r += str(c)
+        else:
+            r += str(key[c])
+    return r
+
+
+key = create_key(cipher)
+# print(key)
+print(decode(cipher, key))
+
+
+# my crap code
+# with open('./applications/crack_caesar/ciphertext.txt') as f:
+#     content = f.read()
+
+# # print(content)
+# cipher = ['E', 'T', 'A', 'O', 'H', 'N', 'R', 'I', 'S', 'D', 'L', 'W', 'U',
+#           'G', 'F', 'B', 'M', 'Y', 'C', 'P', 'K', 'V', 'Q', 'J', 'X', 'Z']
+
+
+# def count_letters(s):
+#     count = {}
+#     for c in s:
+#         if c.isalpha():
+#             count[c] = 1 if c not in count else count[c] + 1
+#             # if c not in count:
+#             #     count[c] = 1
+#             # else:
+#             #     count[c] += 1
+#     return count
+
+
+# x = count_letters(content)
+# # print(x)
+
+# item = {key: value for key, value in sorted(
+#     x.items(), key=lambda e: e[1], reverse=True)}
+# sorted = []
+
+# # for i in item:
+# #     sorted.append(i)
+# #     print(f'{i[0]}: {i[1]}')
+# # # print(sorted)
+
+
+# for letter, value in item.items():
+#     # print(value)
+#     for cipher_letter in cipher:
+#         item[value] = cipher_letter
+# print(item)
+
 
 # ## Challenge
 
