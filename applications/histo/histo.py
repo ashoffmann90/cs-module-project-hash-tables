@@ -5,11 +5,15 @@ with open('applications/histo/robin.txt') as f:
 # print(content)
 
 
+count = {}
+ignore_chars = ':,;.-+=/\\|[]{}()*^&"'
+
+
 def histo(s):
-    global content
-    count = {}
-    words = str.split()
-    for word in content:
+    words = s.translate(str.maketrans(
+        '', '', ignore_chars)).lower().split()
+    # words = s.lower().split()
+    for word in words:
         if word in count:
             count[word] += 1
         else:
@@ -17,7 +21,15 @@ def histo(s):
     return count
 
 
-print(histo(content))
+# print(histo(content))
+count = histo(content)
+count = sorted(count.items(), key=lambda x: (-x[1], x[0]))
+
+# print(count)
+width = max([len(word[0]) for word in count]) + 2
+
+for num in count:
+    print(f'{num[0].ljust(width)}' + '#' * num[1])
 
 # Print a histogram showing the word count for each word, one hash mark
 # for every occurrence of the word.
