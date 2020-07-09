@@ -78,3 +78,13 @@ arfgrq oenprf, yvxr fb `{k:{l}}`
 
 (The hints are encrypted with ROT13. Google for `rot13 decoder` to see
 them.)
+
+
+items: `.items()` method on a dictionary might be useful.
+
+sorting: it's possible for `.sort()` to sort on multiple keys at once.
+
+sorting: negatives might help where `reverse` won't.
+
+printing: you can print a variable field width in an f-string with
+nested braces, like so `{x:{y}}`

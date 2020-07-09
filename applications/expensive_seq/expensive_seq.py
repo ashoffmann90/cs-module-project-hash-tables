@@ -4,17 +4,21 @@ cache = {}
 
 def expensive_seq(x, y, z):
     # Your code here
-    global cache
+    # global cache
     # if x <= 0: y + z
     if x <= 0:
         return y + z
-    elif (x, y, z) in cache:
-        return cache[(x, y, z)]
-    else:
-        # if x >  0: exps(x-1,y+1,z) + exps(x-2,y+2,z*2) + exps(x-3,y+3,z*3)
-        cache[(x, y, z)] = expensive_seq(x-1, y-2, z) + \
+    if (x, y, z) not in cache:
+        cache[(x, y, z)] = expensive_seq(x-1, y+1, z) + \
             expensive_seq(x-2, y+2, z*2) + expensive_seq(x-3, y+3, z*3)
     return cache[(x, y, z)]
+
+    # elif (x, y, z) in cache:
+    #     return cache[(x, y, z)]
+    # else:
+    #     # if x >  0: exps(x-1,y+1,z) + exps(x-2,y+2,z*2) + exps(x-3,y+3,z*3)
+    # cache[(x, y, z)] = expensive_seq(x-1, y-2, z) + \
+    #     expensive_seq(x-2, y+2, z*2) + expensive_seq(x-3, y+3, z*3)
 
 
 if __name__ == "__main__":
